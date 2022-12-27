@@ -41,19 +41,23 @@ async function getLatestFlightNumber() {
 }
 
 async function saveLaunch(launch) {
-    const planet = await planets.findOne({
-        keplerName: launch.target
-    })
+    try {
+        const planet = await planets.findOne({
+            keplerName: launch.target
+        })
 
-    if (!planet) {
-        throw new Error('No matching planet found!')
+        if (!planet) {
+            throw new Error('No matching planet found!')
+        }
+
+        await launches.findOneAndUpdate({
+            flightNumber: launch.flightNumber
+        }, launch, {
+            upsert: true
+        })
+    } catch (error) {
+        console.error(error)
     }
-
-    await launches.findOneAndUpdate({
-        flightNumber: launch.flightNumber
-    }, launch, {
-        upsert: true
-    })
 }
 
 async function scheduleNewLaunch(launch) {
