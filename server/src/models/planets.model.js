@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { parse } = require('csv-parse');
 
-const habitablePlanets = [];
+const planets = require('./planets.mongo');
 
 function isHabitablePlanet(planet) {
   return planet['koi_disposition'] === 'CONFIRMED'
@@ -19,22 +19,39 @@ function loadPlanetsData() {
       }))
       .on('data', (data) => {
         if (isHabitablePlanet(data)) {
-          habitablePlanets.push(data);
+          savePlanets(data)
         }
       })
       .on('error', (err) => {
         console.log(err);
         reject(err)
       })
-      .on('end', () => {
-        console.log(`Found ${habitablePlanets.length} planets!!`)
+      .on('end', async () => {
+        const countPlanetsFound = (await getAllPlanets()).length;
+        console.log(`Found ${countPlanetsFound} planets!!`)
         resolve();
       });
   })
 }
 
-function getAllPlanets() {
-  return habitablePlanets;
+async function getAllPlanets() {
+  return await planets.find({}, {
+    "_id": 0, "__v": 0
+  });
+}
+
+async function savePlanets(planet) {
+  try {
+    await planets.updateOne({
+      keplerName: planet.kepler_name,
+    }, {
+      keplerName: planet.kepler_name
+    }, {
+      upsert: true
+    })
+  } catch (error) {
+    console.error(err)
+  }
 }
 
 module.exports = {
