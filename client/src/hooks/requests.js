@@ -1,9 +1,9 @@
-const API_URL = 'http://localhost:8000/v1'
+const API_URL = "v1";
 
 // Load planets and return as JSON
 async function httpGetPlanets() {
   const response = await fetch(`${API_URL}/planets`);
-  return await response.json()
+  return await response.json();
 }
 
 // Load launches, sort by flight number, and return as JSON.
@@ -19,14 +19,14 @@ async function httpSubmitLaunch(launch) {
     return await fetch(`${API_URL}/launches`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(launch)
-    })
+      body: JSON.stringify(launch),
+    });
   } catch (error) {
     return {
-      ok: false
-    }
+      ok: false,
+    };
   }
 }
 
@@ -34,19 +34,14 @@ async function httpSubmitLaunch(launch) {
 async function httpAbortLaunch(id) {
   try {
     return await fetch(`${API_URL}/launches/${id}`, {
-      method: 'delete'
-    })
+      method: "delete",
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return {
-      ok: false
-    }
+      ok: false,
+    };
   }
 }
 
-export {
-  httpGetPlanets,
-  httpGetLaunches,
-  httpSubmitLaunch,
-  httpAbortLaunch,
-};
+export { httpGetPlanets, httpGetLaunches, httpSubmitLaunch, httpAbortLaunch };
